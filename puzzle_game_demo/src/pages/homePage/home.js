@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
     const [selectedCourse, setSelectedCourse] = useState('');
-
+    const navigate = useNavigate();
     const handleCourseSelection = (course) => {
         setSelectedCourse(course);
+        navigate('/course');
     };
 
     return (
@@ -17,7 +19,7 @@ const HomePage = () => {
                         Course 1
                     </button>
                 </li>
-                <li>
+                {/* <li>
                     <button onClick={() => handleCourseSelection('Course 2')}>
                         Course 2
                     </button>
@@ -26,11 +28,11 @@ const HomePage = () => {
                     <button onClick={() => handleCourseSelection('Course 3')}>
                         Course 3
                     </button>
-                </li>
+                </li> */}
             </ul>
-            {selectedCourse && (
+            {/* {selectedCourse && (
                 <p>You have selected: {selectedCourse}</p>
-            )}
+            )} */}
         </div>
     );
 };
