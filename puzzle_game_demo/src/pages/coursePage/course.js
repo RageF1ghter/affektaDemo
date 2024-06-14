@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import courseData from '../../assets/course1/lesson.json'; 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 
 
 function CoursePage() {
@@ -9,6 +9,8 @@ function CoursePage() {
     const [lessonId, setLessonId] = useState(0);
     const [lessonNum, setLessonNum] = useState(0);
     const [lessonDescription, setLessonDescription] = useState('');
+
+    const navigate = useNavigate();
   
     // Use useEffect to initialize course data from the imported JSON
     useEffect(() => {
@@ -43,12 +45,17 @@ function CoursePage() {
     }
 
     const nextLesson = () => {
-    setLessonId((prevLessonId) => Math.min(prevLessonId + 1, course.courses.length - 1));
+      setLessonId((prevLessonId) => Math.min(prevLessonId + 1, course.courses.length - 1));
     };
 
     const prevLesson = () => {
-    setLessonId((prevLessonId) => Math.max(prevLessonId - 1, 0));
+      setLessonId((prevLessonId) => Math.max(prevLessonId - 1, 0));
     };
+
+    const startGame = () => {
+      navigate('/puzzle');
+      console.log(lessonId)
+    }
   
     // Render current lesson content
     return (
@@ -64,12 +71,24 @@ function CoursePage() {
           >
             Previous Lesson
           </button>
+
           <button 
             onClick={nextLesson}
             disabled={lessonId === lessonNum - 1}
           >
             Next Lesson
           </button>
+          <br></br>
+
+          <button 
+            onClick={startGame}
+            disabled={lessonId !== lessonNum - 1}
+          > 
+            Finish The Puzzle 
+          </button>
+
+          
+
         </div>
 
 

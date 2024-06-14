@@ -1,0 +1,47 @@
+{
+    "_id": "user1",
+    "username": "john_doe",
+    "email": "john@example.com",
+    "passwordHash": "hashed_password",
+    "profile": {
+      "fullName": "John Doe",
+      "preferences": {
+        "courseCategory": "Traffic Rules",
+        "difficulty": "Medium"
+      },
+      "avatar": "path/to/avatar.png"
+    },
+    "courses": [
+      {
+        "courseId": "course1",
+        "progress": 0.75,
+        "lastAccessed": "2024-06-07T12:00:00Z",
+        "completed": false,
+        "quizResults": [
+          {
+            "quizId": "quiz1",
+            "score": 80,
+            "completedAt": "2024-06-07T14:00:00Z",
+            "status": "Pass"
+          }
+        ],
+        "puzzlePieces": 2,
+        "sectionsCompleted": 3
+      }
+    ],
+    "games": [
+      {
+        "gameId": "game1",
+        "highScore": 1500,
+        "lastPlayed": "2024-06-07T15:00:00Z"
+      }
+    ],
+    "leaderboardRank": 10,
+    "certificates": [
+      {
+        "courseId": "course1",
+        "certificateUrl": "path/to/certificate.pdf"
+      }
+    ]
+  }
+  
