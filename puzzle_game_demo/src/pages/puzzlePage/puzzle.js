@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import image from '../../assets/image1.png';
 import './puzzle.css';
 
 function PuzzlePage() {
@@ -10,21 +9,84 @@ function PuzzlePage() {
     const [draggedPiece, setDraggedPiece] = useState(null);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [isCompleted, setIsCompleted] = useState(false); // Track puzzle completion
-    const imageRef = useRef(null); // Reference for the loaded image
+    const imageRef = useRef(null);
+    const [imageURL, setImageURL] = useState('');
+    const [downloadUrl, setDownloadUrl] = useState('');
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        img.src = image;
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height * 2;
-            drawGrid(ctx, img.width, img.height * 2, row * 2, col);
-            imageRef.current = img; // Store the loaded image
-            initializePieces(img, img.width / col, img.height / row, img.height);
-        };
+        fetchImageURL();
     }, []);
+
+    const fetchImageURL = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/puzzle/getImageUrl', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userid: 'user1',
+                    courseID: 'course1'
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch image from backend');
+            }
+            const data = await response.json();
+            setImageURL(data.url);
+        } catch (error) {
+            console.error('Failed to fetch image from backend:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (imageURL) {
+            loadImage(imageURL);
+        }
+    }, [imageURL]);
+
+    const loadImage = async (url) => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            console.error('Canvas reference is null');
+            return;
+        }
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('Failed to get canvas context');
+            return;
+        }
+
+        try {
+            // Fetch the image as a blob
+            const response = await fetch(url, { mode: 'cors' });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image: ${response.statusText}`);
+            }
+
+            const blob = await response.blob();
+
+            // Create an image bitmap from the blob
+            const imageBitmap = await createImageBitmap(blob);
+
+            // Set the canvas dimensions
+            canvas.width = imageBitmap.width;
+            canvas.height = imageBitmap.height * 2;
+
+            // Draw the grid and initialize pieces
+            drawGrid(ctx, imageBitmap.width, imageBitmap.height * 2, row * 2, col);
+            imageRef.current = imageBitmap; // Store the loaded image
+            initializePieces(imageBitmap, imageBitmap.width / col, imageBitmap.height / row, imageBitmap.height);
+
+            // Update the download URL
+            const newDownloadUrl = URL.createObjectURL(blob);
+            setDownloadUrl(newDownloadUrl);
+
+        } catch (error) {
+            console.error('Error loading image:', error);
+        }
+    };
 
     const initializePieces = (img, pieceWidth, pieceHeight, offsetY) => {
         const tempPieces = [];
@@ -79,6 +141,7 @@ function PuzzlePage() {
         }
     };
 
+
     const drawPieces = (pieces, img, pieceWidth, pieceHeight) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
@@ -97,8 +160,10 @@ function PuzzlePage() {
             );
         });
 
-        // Draw the grid on top of everything
-        drawGrid(ctx, canvas.width, canvas.height, row * 2, col);
+        // Draw the grid on top of everything if the puzzle is not completed
+        if (!isCompleted) {
+            drawGrid(ctx, canvas.width, canvas.height, row * 2, col);
+        }
     };
 
     const handleMouseDown = (e) => {
@@ -193,7 +258,7 @@ function PuzzlePage() {
             {isCompleted && (
                 <div className="congratulations">
                     <h2>Congratulations! You completed the puzzle!</h2>
-                    <a href={image} download="original-image.png">Download Original Image</a>
+                    <a href={downloadUrl} download="original-image.png">Download Original Image</a>
                 </div>
             )}
         </div>

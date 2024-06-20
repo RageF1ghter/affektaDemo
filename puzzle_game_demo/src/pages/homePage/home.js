@@ -6,7 +6,7 @@ const HomePage = () => {
     const navigate = useNavigate();
     const handleCourseSelection = (course) => {
         setSelectedCourse(course);
-        navigate('/course');
+        navigate('/image');
     };
 
     return (

@@ -1,47 +1,30 @@
 {
-    "_id": "user1",
-    "username": "john_doe",
-    "email": "john@example.com",
-    "passwordHash": "hashed_password",
-    "profile": {
-      "fullName": "John Doe",
-      "preferences": {
-        "courseCategory": "Traffic Rules",
-        "difficulty": "Medium"
-      },
-      "avatar": "path/to/avatar.png"
-    },
-    "courses": [
+  "userid": "user1",
+  "username": "john_doe",
+  "email": "john_doe@example.com",
+  "owned_puzzles": [
       {
-        "courseId": "course1",
-        "progress": 0.75,
-        "lastAccessed": "2024-06-07T12:00:00Z",
-        "completed": false,
-        "quizResults": [
-          {
-            "quizId": "quiz1",
-            "score": 80,
-            "completedAt": "2024-06-07T14:00:00Z",
-            "status": "Pass"
+          "puzzleUrl": "https://res.cloudinary.com/dlcy2mo39/image/upload/v1718635605/puzzle_images/r7kphvzw5kicfma4z9i0.png",
+          "courseID": "course1",
+          "pieces": [
+              {"pieceID": "1", "position": {"x": 0, "y": 0}, "pieceDimensions": {"width": 100, "height": 100}},
+              {"pieceID": "2", "position": {"x": 1, "y": 0}, "pieceDimensions": {"width": 100, "height": 100}},
+              {"pieceID": "3", "position": {"x": 2, "y": 0}, "pieceDimensions": {"width": 100, "height": 100}},
+              {"pieceID": "4", "position": {"x": 3, "y": 0}, "pieceDimensions": {"width": 100, "height": 100}},
+              {"pieceID": "5", "position": {"x": 4, "y": 0}, "pieceDimensions": {"width": 100, "height": 100}}
+          ],
+          "puzzle_metadata": {
+              "puzzleDimensions": {"width": 512, "height": 512},
+              "totalPieces": 5
           }
-        ],
-        "puzzlePieces": 2,
-        "sectionsCompleted": 3
       }
-    ],
-    "games": [
-      {
-        "gameId": "game1",
-        "highScore": 1500,
-        "lastPlayed": "2024-06-07T15:00:00Z"
-      }
-    ],
-    "leaderboardRank": 10,
-    "certificates": [
-      {
-        "courseId": "course1",
-        "certificateUrl": "path/to/certificate.pdf"
-      }
-    ]
-  }
-  
+  ],
+  "course_progress": [
+      {"courseID": "course1", "progress": 75, "last_accessed": "2024-06-18T12:00:00Z"}
+  ],
+  "quiz_scores": [
+      {"courseID": "course1", "quizID": "quiz1", "score": 85, "date_taken": "2024-06-18T12:00:00Z"}
+  ]
+}
+
+

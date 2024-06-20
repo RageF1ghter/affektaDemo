@@ -5,6 +5,7 @@ import HomePage from './pages/homePage/home';
 import ProfilePage from './pages/profilePage/profile';
 import CoursePage from './pages/coursePage/course';
 import PuzzlePage from './pages/puzzlePage/puzzle';
+import ImagePage from './pages/imgPage/image';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/course" element={<CoursePage />} />
           <Route path="/puzzle" element={<PuzzlePage />} />
+          <Route path="/image" element={<ImagePage />} />
         </Routes>
       </div>
     </Router>
