@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 const ImagePage = () => {
-    const prompts = ["landscape", "forst", "mountain", "ocean", "city", "desert", "sunset", "sunrise", "night", "day"];
-    const defaultPrompt = ["4k", "high-resolution", "beautiful", "scenic", "panoramic", "aesthetic", "artistic", "HD", "wallpaper"]
+    const prompts = ["landscape", "forest", "mountain", "ocean", "city", "desert", "sunset", "sunrise", "night", "day"];
+    const defaultPrompt = ["4k", "high-resolution", "beautiful", "scenic", "panoramic", "aesthetic", "artistic", "HD", "wallpaper"];
     const [selectedPrompt, setSelectedPrompt] = useState([]);
-    const [buttonStatus, setButtonStatus] = useState(false);
     const [generatedImage, setGeneratedImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
     const [error, setError] = useState('');
 
-
     const navigate = useNavigate();
-    
+
     const handlePromptSelection = (prompt) => {
         setSelectedPrompt((prev) => {
             if (prev.includes(prompt)) {
@@ -26,7 +25,9 @@ const ImagePage = () => {
     const generateImage = async () => {
         const allPrompts = [...selectedPrompt, ...defaultPrompt];
         try {
-            const response = await fetch('http://localhost:3000/generate/generate', {  
+            setLoading(true);
+            setProgress(0);
+            const response = await fetch('http://localhost:3000/generate/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -35,9 +36,10 @@ const ImagePage = () => {
                     userid: 'user1',
                     courseID: 'course1',
                     prompt: allPrompts.join(', '),
-                    steps: 10,  
-                    cfg_scale: 7.5, 
-                    width: 512, 
+                    seed: 1,
+                    steps: 40,
+                    cfg_scale: 7.5,
+                    width: 512,
                     height: 512
                 })
             });
@@ -46,16 +48,37 @@ const ImagePage = () => {
                 throw new Error('Failed to generate image');
             }
             const data = await response.json();
-            console.log(data.imageUrl);
             setGeneratedImage(data.imageUrl);
-            // setGeneratedImage(`data:image/png;base64,${data.imageDara}`);
         } catch (error) {
+            setError('Error generating image');
             console.error('Error:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    return (
+    useEffect(() => {
+        let interval;
+        if (loading) {
+            interval = setInterval(async () => {
+                try {
+                    const progressResponse = await fetch('http://localhost:3000/generate/progress');
+                    const progressData = await progressResponse.json();
+                    console.log('Progress:', progressData.progress);
+                    setProgress(progressData.progress * 100);
+                    if (progressData.progress === 1) {
+                        clearInterval(interval);
+                    }
+                } catch (error) {
+                    console.error('Error fetching progress:', error);
+                }
+            }, 1000);
+        }
 
+        return () => clearInterval(interval);
+    }, [loading]);
+
+    return (
         <div>
             <h1>Generate your exclusive image</h1>
             <p>Select your image features:</p>
@@ -72,6 +95,7 @@ const ImagePage = () => {
             <button onClick={generateImage} disabled={loading}>
                 {loading ? 'Generating...' : 'Generate Image'}
             </button>
+            {loading && <div><p>Progress: {progress.toFixed(2)}%</p><progress value={progress} max="100" /></div>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {generatedImage && (
                 <div>
@@ -79,9 +103,8 @@ const ImagePage = () => {
                     <img src={generatedImage} alt="Generated" style={{ maxWidth: '100%', height: 'auto' }} />
                 </div>
             )}
-            <br></br>
-            <button onClick={() => {navigate('/course')}}>next</button>
-            
+            <br />
+            <button onClick={() => navigate('/course')}>Next</button>
         </div>
     );
 };
